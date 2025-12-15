@@ -11,25 +11,28 @@ const CategoryItem = ({ categoryName, categoryData, isExpanded }) => {
   const { loadingStates } = state;
 
   return (
-    <div className="border rounded-lg shadow-sm bg-white overflow-visible">
+    <div className="border border-border rounded-lg shadow-sm bg-card overflow-visible">
       {/* Category Header */}
-      <div className="p-4 bg-blue-50 border-b flex items-center justify-between">
+      <div className="p-4 bg-category border-b border-border flex items-center justify-between">
         {/* Clickable area for expand/collapse */}
         <div
-          className="flex items-center gap-3 flex-1 cursor-pointer hover:bg-blue-100 rounded-md p-2 -ml-2"
+          className="flex items-center gap-3 flex-1 cursor-pointer hover:bg-category-hover rounded-md p-2 -ml-2 transition-colors"
           onClick={() => actions.toggleCategory(categoryName)}
+          role="button"
+          aria-expanded={isExpanded}
+          aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${categoryName} category`}
         >
           {isExpanded ?
-            <ChevronDown className="w-5 h-5 text-blue-600" /> :
-            <ChevronRight className="w-5 h-5 text-blue-600" />
+            <ChevronDown className="w-5 h-5 text-primary" /> :
+            <ChevronRight className="w-5 h-5 text-primary" />
           }
           <div>
-            <h3 className="font-semibold text-lg text-blue-900">{categoryName}</h3>
-            <p className="text-sm text-blue-600">
+            <h3 className="font-semibold text-lg text-category-text">{categoryName}</h3>
+            <p className="text-sm text-category-muted">
               Budget: $
               {categoryData.items
-              ?.reduce((sum, sub) => sum + (sub.allotted ?? 0), 0)
-               .toFixed(2)}
+                ?.reduce((sum, sub) => sum + (sub.allotted ?? 0), 0)
+                .toFixed(2)}
             </p>
           </div>
         </div>
@@ -38,15 +41,15 @@ const CategoryItem = ({ categoryName, categoryData, isExpanded }) => {
         <div onClick={e => e.stopPropagation()}>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" aria-label="Category options">
                 <MoreVertical className="w-5 h-5" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40">
               <DropdownMenuItem
                 onClick={() => actions.openModal('edit-category', {
-                    id: categoryData.id,
-                    name: categoryName
+                  id: categoryData.id,
+                  name: categoryName
                 })}
               >
                 Edit Category
@@ -62,7 +65,7 @@ const CategoryItem = ({ categoryName, categoryData, isExpanded }) => {
 
               <DropdownMenuItem
                 onClick={() => actions.deleteCategory(categoryData.id)}
-                className="text-red-600"
+                className="text-destructive"
               >
                 Delete Category
               </DropdownMenuItem>
@@ -73,7 +76,7 @@ const CategoryItem = ({ categoryName, categoryData, isExpanded }) => {
 
       {/* Subcategories */}
       {isExpanded && (
-        <div className="divide-y">
+        <div className="divide-y divide-border">
           {categoryData.items.map((item) => (
             <SubcategoryItem
               key={item.id}
