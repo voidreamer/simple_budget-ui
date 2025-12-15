@@ -24,8 +24,19 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 221 83% 53%;
     --radius: 0.75rem;
+
+    /* Category-specific colors */
+    --category-bg: 213 100% 96%;
+    --category-bg-hover: 213 100% 93%;
+    --category-text: 221 83% 25%;
+    --category-text-muted: 221 70% 45%;
+
+    /* Transaction colors */
+    --transaction-bg: 210 40% 98%;
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
   }
-  
+
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
@@ -46,6 +57,17 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 224.3 76.3% 48%;
+
+    /* Category-specific colors (dark mode) */
+    --category-bg: 217.2 32.6% 12%;
+    --category-bg-hover: 217.2 32.6% 15%;
+    --category-text: 210 40% 98%;
+    --category-text-muted: 215 20.2% 65.1%;
+
+    /* Transaction colors (dark mode) */
+    --transaction-bg: 217.2 32.6% 10%;
+    --success: 142 70% 45%;
+    --success-foreground: 0 0% 100%;
   }
 }
 
@@ -53,7 +75,25 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground transition-colors duration-300;
   }
+}
+
+/* Toast animation */
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
 }

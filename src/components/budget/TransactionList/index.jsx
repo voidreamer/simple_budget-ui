@@ -12,22 +12,22 @@ const TransactionList = ({ subcategory }) => {
   const { loadingStates } = state;
 
   return (
-    <div className="pl-12 pr-4 py-2 bg-gray-50 overflow-visible">
+    <div className="pl-12 pr-4 py-2 bg-muted/50 overflow-visible">
       <div className="space-y-2">
         {subcategory.transactions?.map(transaction => {
           const IconComponent = TRANSACTION_ICONS.find(i => i.label === transaction.icon)?.icon ||
             TRANSACTION_ICONS[0].icon;
 
           return (
-            <div key={transaction.id} className="bg-white rounded-lg p-3 shadow-sm relative">
+            <div key={transaction.id} className="bg-card rounded-lg p-3 shadow-sm relative border border-border">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-gray-50 rounded-full">
-                    <IconComponent className="w-4 h-4 text-gray-600" />
+                  <div className="p-2 bg-muted rounded-full">
+                    <IconComponent className="w-4 h-4 text-muted-foreground" />
                   </div>
                   <div>
-                    <div className="font-medium">{transaction.description}</div>
-                    <div className="text-sm text-gray-500">
+                    <div className="font-medium text-foreground">{transaction.description}</div>
+                    <div className="text-sm text-muted-foreground">
                       {new Date(transaction.date).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'long',
@@ -37,8 +37,8 @@ const TransactionList = ({ subcategory }) => {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="font-medium text-green-600">
-                    ${transaction.amount}
+                  <span className="font-medium text-success">
+                    ${transaction.amount.toFixed(2)}
                   </span>
                   {transaction.isLoading ? (
                     <LoadingSpinner size="sm" />
@@ -46,15 +46,13 @@ const TransactionList = ({ subcategory }) => {
                     <div className="relative">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
+                          <Button variant="ghost" size="icon" aria-label="Transaction options">
                             <MoreVertical className="w-4 h-4" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent
                           align="end"
                           className="w-40"
-                          // Force the menu to render above other content
-                          style={{ zIndex: 50 }}
                         >
                           <DropdownMenuItem
                             onClick={() => actions.openModal('edit-transaction', transaction)}
@@ -63,7 +61,7 @@ const TransactionList = ({ subcategory }) => {
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => actions.deleteTransaction(transaction.id)}
-                            className="text-red-600"
+                            className="text-destructive"
                           >
                             Delete
                           </DropdownMenuItem>
@@ -78,7 +76,7 @@ const TransactionList = ({ subcategory }) => {
         })}
 
         {(!subcategory.transactions || subcategory.transactions.length === 0) && (
-          <div className="text-center py-8 text-gray-500 bg-white rounded-lg">
+          <div className="text-center py-8 text-muted-foreground bg-card rounded-lg border border-border">
             <p>No transactions yet</p>
           </div>
         )}

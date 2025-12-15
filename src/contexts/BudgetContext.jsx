@@ -312,7 +312,7 @@ export function BudgetProvider({ children }) {
   };
 
   return (
-    <BudgetContext.Provider value={value}>,
+    <BudgetContext.Provider value={value}>
       {children}
     </BudgetContext.Provider>
   );

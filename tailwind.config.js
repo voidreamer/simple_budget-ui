@@ -50,6 +50,19 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        category: {
+          DEFAULT: "hsl(var(--category-bg))",
+          hover: "hsl(var(--category-bg-hover))",
+          text: "hsl(var(--category-text))",
+          muted: "hsl(var(--category-text-muted))",
+        },
+        transaction: {
+          DEFAULT: "hsl(var(--transaction-bg))",
+        },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
