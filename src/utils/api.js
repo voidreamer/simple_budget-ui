@@ -40,11 +40,13 @@ export const budgetApi = {
   async fetchBudgetData(year, month) {
     try {
       const headers = await getAuthHeaders();
+      console.log('fetchBudgetData - calling API with year:', year, 'month:', month);
       const response = await fetch(`${API_BASE_URL}/budget-summary/${year}/${month}`, { headers });
 
       if (!response.ok) {
         // If response is 404, return empty object instead of throwing
         if (response.status === 404) {
+          console.log('fetchBudgetData - 404 response');
           return {};
         }
         const errorData = await response.json();
@@ -52,15 +54,18 @@ export const budgetApi = {
       }
 
       const data = await response.json();
+      console.log('fetchBudgetData - raw API response:', data);
 
       // Handle empty response
       if (!data || !Array.isArray(data) || data.length === 0) {
+        console.log('fetchBudgetData - empty response');
         return {};
       }
 
       // Transform API data to our frontend format
       const transformedData = {};
       data.forEach(category => {
+        console.log('fetchBudgetData - processing category:', category.name, 'subcategories:', category.subcategories);
         transformedData[category.name] = {
           id: category.id,
           budget: category.budget,
@@ -74,6 +79,7 @@ export const budgetApi = {
         };
       });
 
+      console.log('fetchBudgetData - transformed data:', transformedData);
       return transformedData;
     } catch (error) {
       console.error('Error fetching budget data:', error);

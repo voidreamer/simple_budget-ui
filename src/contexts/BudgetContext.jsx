@@ -80,8 +80,11 @@ export const BudgetProvider = ({ children }) => {
     setLoading(true);
     try {
       const parts = selectedDate.split(' ');
+      console.log('fetchDashboardData - date parts:', parts, 'year:', parts[1], 'month:', parts[0]);
       const data = await budgetApi.fetchBudgetData(parts[1], parts[0]);
+      console.log('fetchDashboardData - received data:', data);
       setCategories(data || {});
+      console.log('fetchDashboardData - categories state updated');
     } catch (error) {
       console.error("Failed to fetch dashboard data", error);
       setCategories({});
