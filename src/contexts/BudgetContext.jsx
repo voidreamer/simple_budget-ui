@@ -52,7 +52,9 @@ export const BudgetProvider = ({ children }) => {
       const active = data.find(b => b.id.toString() === storedId) || data[0];
 
       if (active) {
-        switchBudget(active.id);
+        // Set currentBudget directly here since we have the data
+        setCurrentBudget(active);
+        localStorage.setItem('active_budget_id', active.id);
       }
     } catch (error) {
       console.error("Failed to load budgets", error);
@@ -62,6 +64,7 @@ export const BudgetProvider = ({ children }) => {
   };
 
   const switchBudget = (budgetId) => {
+    // Use budgets from state OR find from the current budgets
     const budget = budgets.find(b => b.id === budgetId);
     if (budget) {
       setCurrentBudget(budget);
@@ -95,7 +98,15 @@ export const BudgetProvider = ({ children }) => {
 
   const addMember = async (userId) => {
     if (!currentBudget) return;
-    await budgetApi.addBudgetMember(currentBudget.id, userId);
+    try {
+      await budgetApi.addBudgetMember(currentBudget.id, userId);
+      alert(`Successfully added user ${userId} to budget "${currentBudget.name}"`);
+    } catch (error) {
+      console.error("Failed to add member:", error);
+      const errorMessage = error.response?.data?.detail || error.message || "Failed to add member";
+      alert(`Error: ${errorMessage}`);
+      throw error; // Re-throw so caller knows it failed
+    }
   };
 
   // Legacy Actions (adapted)
@@ -105,28 +116,64 @@ export const BudgetProvider = ({ children }) => {
   const refreshData = () => fetchDashboardData();
 
   const createCategory = async (data) => {
-    await budgetApi.createCategory({ ...data, budget: 0 }); // budget amount, not ID
-    refreshData();
+    try {
+      await budgetApi.createCategory(data);
+      await refreshData();
+    } catch (error) {
+      console.error("Failed to create category:", error);
+      alert(`Failed to create category: ${error.message || 'Unknown error'}`);
+      throw error;
+    }
   };
   const editCategory = async (id, data) => {
-    await budgetApi.editCategory(id, data);
-    refreshData();
+    try {
+      await budgetApi.editCategory(id, data);
+      await refreshData();
+    } catch (error) {
+      console.error("Failed to edit category:", error);
+      alert(`Failed to edit category: ${error.message || 'Unknown error'}`);
+      throw error;
+    }
   };
   const createSubcategory = async (data) => {
-    await budgetApi.createSubcategory(data);
-    refreshData();
+    try {
+      await budgetApi.createSubcategory(data);
+      await refreshData();
+    } catch (error) {
+      console.error("Failed to create subcategory:", error);
+      alert(`Failed to create subcategory: ${error.message || 'Unknown error'}`);
+      throw error;
+    }
   };
   const updateSubcategory = async (id, data) => {
-    await budgetApi.updateSubcategory(id, data);
-    refreshData();
+    try {
+      await budgetApi.updateSubcategory(id, data);
+      await refreshData();
+    } catch (error) {
+      console.error("Failed to update subcategory:", error);
+      alert(`Failed to update subcategory: ${error.message || 'Unknown error'}`);
+      throw error;
+    }
   };
   const createTransaction = async (data) => {
-    await budgetApi.createTransaction(data);
-    refreshData();
+    try {
+      await budgetApi.createTransaction(data);
+      await refreshData();
+    } catch (error) {
+      console.error("Failed to create transaction:", error);
+      alert(`Failed to create transaction: ${error.message || 'Unknown error'}`);
+      throw error;
+    }
   };
   const updateTransaction = async (id, data) => {
-    await budgetApi.updateTransaction(id, data);
-    refreshData();
+    try {
+      await budgetApi.updateTransaction(id, data);
+      await refreshData();
+    } catch (error) {
+      console.error("Failed to update transaction:", error);
+      alert(`Failed to update transaction: ${error.message || 'Unknown error'}`);
+      throw error;
+    }
   };
 
   // Construct the "state" and "actions" objects expected by BudgetDashboard
