@@ -5,9 +5,23 @@ import BudgetDashboard from './BudgetDashboard';
 import ThemeToggle from '../ui/theme-toggle';
 
 const BudgetSwitcher = () => {
-  const { budgets, currentBudget, switchBudget, createNewBudget, addMember } = useBudget();
+  const { budgets, currentBudget, switchBudget, createNewBudget, addMember, loading } = useBudget();
 
-  if (!currentBudget) return <div>Loading...</div>;
+  if (loading && !currentBudget) return <div className="text-sm text-muted-foreground">Loading...</div>;
+
+  if (!currentBudget) {
+    return (
+      <button
+        onClick={() => {
+          const name = prompt("Enter a name for your first budget:");
+          if (name) createNewBudget(name);
+        }}
+        className="bg-primary text-primary-foreground px-4 py-2 rounded shadow hover:bg-primary/90 transition-colors"
+      >
+        Create Your First Budget
+      </button>
+    );
+  }
 
   return (
     <div className="flex items-center gap-2">
