@@ -37,8 +37,18 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logout = async () => {
-        const { error } = await supabase.auth.signOut();
-        if (error) throw error;
+        try {
+            const { error } = await supabase.auth.signOut();
+            // Ignore "Auth session missing" error - user is already logged out
+            if (error && !error.message?.includes('Auth session missing')) {
+                throw error;
+            }
+        } catch (error) {
+            // If signOut fails for any reason, still clear the local state
+            console.warn('Logout warning:', error.message);
+        }
+        // Always clear local state regardless of signOut result
+        setUser(null);
     };
 
     return (

@@ -198,6 +198,28 @@ export const BudgetProvider = ({ children }) => {
     }
   };
 
+  const deleteSubcategory = async (id) => {
+    try {
+      await budgetApi.deleteSubcategory(id);
+      await refreshData();
+    } catch (error) {
+      console.error("Failed to delete subcategory:", error);
+      alert(`Failed to delete subcategory: ${error.message || 'Unknown error'}`);
+      throw error;
+    }
+  };
+
+  const deleteTransaction = async (id) => {
+    try {
+      await budgetApi.deleteTransaction(id);
+      await refreshData();
+    } catch (error) {
+      console.error("Failed to delete transaction:", error);
+      alert(`Failed to delete transaction: ${error.message || 'Unknown error'}`);
+      throw error;
+    }
+  };
+
   // Construct the "state" and "actions" objects expected by BudgetDashboard
   const value = {
     // New Structure
@@ -227,8 +249,10 @@ export const BudgetProvider = ({ children }) => {
       deleteCategory,
       createSubcategory,
       updateSubcategory,
+      deleteSubcategory,
       createTransaction,
-      updateTransaction
+      updateTransaction,
+      deleteTransaction
     }
   };
 

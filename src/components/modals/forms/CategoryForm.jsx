@@ -12,8 +12,9 @@ const CategoryForm = ({ onSubmit, initialValues = {}, type = 'category' }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const isCategory = type === 'category' || type === 'edit-category';
     onSubmit(
-      type === 'category'
+      isCategory
         ? {
             name: values.name,
             budget: parseFloat(values.amount) || 0
@@ -43,7 +44,7 @@ const CategoryForm = ({ onSubmit, initialValues = {}, type = 'category' }) => {
           type="number"
           step="0.01"
           min="0"
-          placeholder={type === 'category' ? 'Budget Amount' : 'Allotted Amount'}
+          placeholder={(type === 'category' || type === 'edit-category') ? 'Budget Amount' : 'Allotted Amount'}
           value={values.amount}
           onChange={handleChange}
         />
