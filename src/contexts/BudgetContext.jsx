@@ -95,7 +95,15 @@ export const BudgetProvider = ({ children }) => {
 
   const addMember = async (userId) => {
     if (!currentBudget) return;
-    await budgetApi.addBudgetMember(currentBudget.id, userId);
+    try {
+      await budgetApi.addBudgetMember(currentBudget.id, userId);
+      alert(`Successfully added user ${userId} to budget "${currentBudget.name}"`);
+    } catch (error) {
+      console.error("Failed to add member:", error);
+      const errorMessage = error.response?.data?.detail || error.message || "Failed to add member";
+      alert(`Error: ${errorMessage}`);
+      throw error; // Re-throw so caller knows it failed
+    }
   };
 
   // Legacy Actions (adapted)

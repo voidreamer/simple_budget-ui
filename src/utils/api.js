@@ -1,9 +1,7 @@
-//const API_BASE_URL = 'https://simplebudget-app.onrender.com/api';
-//const API_BASE_URL = 'https://simple-budget-app-bay.vercel.app/api'
-//const API_BASE_URL = 'http://localhost:8001/api';
-
-const API_BASE_URL = 'https://owllpvmcuf.execute-api.ca-central-1.amazonaws.com/api';
 import { supabase } from '../supabase';
+
+// Use environment variable for API URL, with fallback for local development
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001/api';
 
 const getAuthHeaders = async () => {
   const { data: { session } } = await supabase.auth.getSession();
