@@ -158,9 +158,13 @@ export const BudgetProvider = ({ children }) => {
     }
   };
   const createSubcategory = async (data) => {
+    console.log('createSubcategory called with:', data);
     try {
-      await budgetApi.createSubcategory(data);
+      const result = await budgetApi.createSubcategory(data);
+      console.log('createSubcategory result:', result);
       await refreshData();
+      console.log('refreshData completed');
+      return result;
     } catch (error) {
       console.error("Failed to create subcategory:", error);
       alert(`Failed to create subcategory: ${error.message || 'Unknown error'}`);

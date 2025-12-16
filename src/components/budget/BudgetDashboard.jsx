@@ -159,6 +159,7 @@ const BudgetDashboard = () => {
         type={modal.type}
         initialValues={modal.data}
         onSubmit={async (data) => {
+          console.log('Modal onSubmit - type:', modal.type, 'data:', data, 'modal.data:', modal.data);
           try {
             const { month, year } = parseDateString(state.selectedDate);
             switch (modal.type) {
@@ -167,6 +168,7 @@ const BudgetDashboard = () => {
               case 'edit-category':
                 await actions.editCategory(modal.data.id, { name: data.name, month, year }); break;
               case 'subcategory':
+                console.log('Creating subcategory with category_id:', modal.data.id);
                 await actions.createSubcategory({ ...data, category_id: modal.data.id }); break;
               case 'transaction':
                 await actions.createTransaction({ ...data, subcategory_id: modal.data.subcategory_id }); break;
@@ -175,9 +177,9 @@ const BudgetDashboard = () => {
               case 'edit-subcategory':
                 await actions.updateSubcategory(modal.data.id, data); break;
             }
+            console.log('Action completed successfully');
             actions.closeModal();
           } catch (error) {
-            // Error is already shown via alert in the action
             console.error('Modal submit error:', error);
           }
         }}

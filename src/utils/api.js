@@ -138,12 +138,16 @@ export const budgetApi = {
   },
 
   async createSubcategory(data) {
+    console.log('API createSubcategory - sending:', data);
     const response = await fetch(`${API_BASE_URL}/subcategories/`, {
       method: 'POST',
       headers: await getAuthHeaders(),
       body: JSON.stringify(data)
     });
-    return handleResponse(response);
+    console.log('API createSubcategory - response status:', response.status);
+    const result = await handleResponse(response);
+    console.log('API createSubcategory - result:', result);
+    return result;
   },
 
   async updateSubcategory(id, data) {
