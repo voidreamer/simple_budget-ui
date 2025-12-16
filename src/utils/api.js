@@ -3,6 +3,17 @@
 //const API_BASE_URL = 'http://localhost:8001/api';
 
 const API_BASE_URL = 'https://owllpvmcuf.execute-api.ca-central-1.amazonaws.com/api';
+import { supabase } from '../supabase';
+
+const getAuthHeaders = async () => {
+  const { data: { session } } = await supabase.auth.getSession();
+  const token = session?.access_token;
+  return {
+    'Content-Type': 'application/json',
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+    ...(localStorage.getItem('active_budget_id') ? { 'X-Budget-ID': localStorage.getItem('active_budget_id') } : {})
+  };
+};
 
 class ApiError extends Error {
   constructor(message, status, data) {
@@ -30,7 +41,8 @@ const handleResponse = async (response) => {
 export const budgetApi = {
   async fetchBudgetData(year, month) {
     try {
-      const response = await fetch(`${API_BASE_URL}/budget-summary/${year}/${month}`);
+      const headers = await getAuthHeaders();
+      const response = await fetch(`${API_BASE_URL}/budget-summary/${year}/${month}`, { headers });
 
       if (!response.ok) {
         // If response is 404, return empty object instead of throwing
@@ -77,7 +89,7 @@ export const budgetApi = {
       `${API_BASE_URL}/categories/?month=${data.month}&year=${data.year}`,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: await getAuthHeaders(),
         body: JSON.stringify({
           name: data.name,
           budget: data.budget
@@ -90,7 +102,7 @@ export const budgetApi = {
   async editCategory(categoryId, data) {
     const response = await fetch(`${API_BASE_URL}/categories/${categoryId}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: await getAuthHeaders(),
       body: JSON.stringify({
         name: data.name,
         budget: data.budget
@@ -110,9 +122,7 @@ export const budgetApi = {
     try {
       const response = await fetch(`${API_BASE_URL}/categories/${categoryId}`, {
         method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        headers: await getAuthHeaders()
       });
 
       if (!response.ok) {
@@ -130,7 +140,7 @@ export const budgetApi = {
   async createSubcategory(data) {
     const response = await fetch(`${API_BASE_URL}/subcategories/`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: await getAuthHeaders(),
       body: JSON.stringify(data)
     });
     return handleResponse(response);
@@ -139,7 +149,7 @@ export const budgetApi = {
   async updateSubcategory(id, data) {
     const response = await fetch(`${API_BASE_URL}/subcategories/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: await getAuthHeaders(),
       body: JSON.stringify(data)
     });
     return handleResponse(response);
@@ -147,7 +157,8 @@ export const budgetApi = {
 
   async deleteSubcategory(id) {
     const response = await fetch(`${API_BASE_URL}/subcategories/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: await getAuthHeaders()
     });
     return handleResponse(response);
   },
@@ -155,7 +166,7 @@ export const budgetApi = {
   async createTransaction(data) {
     const response = await fetch(`${API_BASE_URL}/transactions/`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: await getAuthHeaders(),
       body: JSON.stringify({
         description: data.description,
         amount: data.amount,
@@ -169,7 +180,7 @@ export const budgetApi = {
   async updateTransaction(id, data) {
     const response = await fetch(`${API_BASE_URL}/transactions/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: await getAuthHeaders(),
       body: JSON.stringify(data)
     });
     return handleResponse(response);
@@ -177,7 +188,32 @@ export const budgetApi = {
 
   async deleteTransaction(id) {
     const response = await fetch(`${API_BASE_URL}/transactions/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: await getAuthHeaders()
+    });
+    return handleResponse(response);
+  },
+
+  async getBudgets() {
+    const response = await fetch(`${API_BASE_URL}/budgets/`, {
+      headers: await getAuthHeaders()
+    });
+    return handleResponse(response);
+  },
+
+  async createBudget(name) {
+    const response = await fetch(`${API_BASE_URL}/budgets/`, {
+      method: 'POST',
+      headers: await getAuthHeaders(),
+      body: JSON.stringify({ name })
+    });
+    return handleResponse(response);
+  },
+
+  async addBudgetMember(budgetId, userId) {
+    const response = await fetch(`${API_BASE_URL}/budgets/${budgetId}/members?user_id_to_add=${userId}`, {
+      method: 'POST',
+      headers: await getAuthHeaders()
     });
     return handleResponse(response);
   }
