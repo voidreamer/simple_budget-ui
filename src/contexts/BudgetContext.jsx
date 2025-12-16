@@ -8,19 +8,39 @@ export const useBudget = () => useContext(BudgetContext);
 
 export const BudgetProvider = ({ children }) => {
   const { user } = useAuth();
+  // Multi-tenancy State
   const [budgets, setBudgets] = useState([]);
   const [currentBudget, setCurrentBudget] = useState(null);
-  const [loading, setLoading] = useState(false);
 
-  // Fetch budgets when user logs in
+  // Dashboard Data State
+  const [categories, setCategories] = useState({});
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const d = new Date();
+    return `${d.toLocaleString('default', { month: 'long' })} ${d.getFullYear()}`;
+  });
+  const [loading, setLoading] = useState(false);
+  const [loadingStates, setLoadingStates] = useState({}); // For specific actions
+
+  // Modal State
+  const [modal, setModal] = useState({ isOpen: false, type: null, data: null });
+
+  // 1. Fetch Budgets on Login
   useEffect(() => {
     if (user) {
       refreshBudgets();
     } else {
       setBudgets([]);
       setCurrentBudget(null);
+      setCategories({});
     }
   }, [user]);
+
+  // 2. Fetch Dashboard Data when Budget or Date changes
+  useEffect(() => {
+    if (currentBudget && selectedDate) {
+      fetchDashboardData();
+    }
+  }, [currentBudget, selectedDate]);
 
   const refreshBudgets = async () => {
     setLoading(true);
@@ -28,16 +48,11 @@ export const BudgetProvider = ({ children }) => {
       const data = await budgetApi.getBudgets();
       setBudgets(data);
 
-      // Restore active budget from localStorage or default to first
       const storedId = localStorage.getItem('active_budget_id');
       const active = data.find(b => b.id.toString() === storedId) || data[0];
 
       if (active) {
         switchBudget(active.id);
-      } else if (data.length === 0) {
-        // If no budgets exist, we might need to prompt creation or create a default "Personal" one
-        // For now, let's assume the user has 0 budgets and the UI will handle it
-        setCurrentBudget(null);
       }
     } catch (error) {
       console.error("Failed to load budgets", error);
@@ -51,19 +66,31 @@ export const BudgetProvider = ({ children }) => {
     if (budget) {
       setCurrentBudget(budget);
       localStorage.setItem('active_budget_id', budget.id);
-      // Force refresh of data? The components listening to currentBudget should react
+      // Data fetch triggered by useEffect
     }
   };
 
+  const fetchDashboardData = async () => {
+    setLoading(true);
+    try {
+      const parts = selectedDate.split(' ');
+      const data = await budgetApi.fetchBudgetData(parts[1], parts[0]);
+      setCategories(data || {});
+    } catch (error) {
+      console.error("Failed to fetch dashboard data", error);
+      setCategories({});
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Actions
   const createNewBudget = async (name) => {
     try {
       const newBudget = await budgetApi.createBudget(name);
       await refreshBudgets();
       switchBudget(newBudget.id);
-      return newBudget;
-    } catch (e) {
-      throw e;
-    }
+    } catch (e) { console.error(e); }
   };
 
   const addMember = async (userId) => {
@@ -71,14 +98,66 @@ export const BudgetProvider = ({ children }) => {
     await budgetApi.addBudgetMember(currentBudget.id, userId);
   };
 
+  // Legacy Actions (adapted)
+  const openModal = (type, data = null) => setModal({ isOpen: true, type, data });
+  const closeModal = () => setModal({ isOpen: false, type: null, data: null });
+
+  const refreshData = () => fetchDashboardData();
+
+  const createCategory = async (data) => {
+    await budgetApi.createCategory({ ...data, budget: 0 }); // budget amount, not ID
+    refreshData();
+  };
+  const editCategory = async (id, data) => {
+    await budgetApi.editCategory(id, data);
+    refreshData();
+  };
+  const createSubcategory = async (data) => {
+    await budgetApi.createSubcategory(data);
+    refreshData();
+  };
+  const updateSubcategory = async (id, data) => {
+    await budgetApi.updateSubcategory(id, data);
+    refreshData();
+  };
+  const createTransaction = async (data) => {
+    await budgetApi.createTransaction(data);
+    refreshData();
+  };
+  const updateTransaction = async (id, data) => {
+    await budgetApi.updateTransaction(id, data);
+    refreshData();
+  };
+
+  // Construct the "state" and "actions" objects expected by BudgetDashboard
   const value = {
+    // New Structure
     budgets,
     currentBudget,
     switchBudget,
-    refreshBudgets,
     createNewBudget,
     addMember,
-    loading
+    loading,
+
+    // Adapter for BudgetDashboard
+    state: {
+      categories,
+      isLoading: loading,
+      loadingStates,
+      modal,
+      selectedDate
+    },
+    actions: {
+      setSelectedDate,
+      openModal,
+      closeModal,
+      createCategory,
+      editCategory,
+      createSubcategory,
+      updateSubcategory,
+      createTransaction,
+      updateTransaction
+    }
   };
 
   return (
