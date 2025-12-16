@@ -36,3 +36,7 @@ yarn-error.log*
 .cache/
 .parcel-cache/
 .vite/
+
+# System
+.DS_Store
+Thumbs.db

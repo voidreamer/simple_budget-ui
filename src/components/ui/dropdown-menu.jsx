@@ -37,9 +37,11 @@ export function DropdownMenuTrigger({ children, asChild, ...props }) {
   return <button {...props}>{children}</button>;
 }
 
-export function DropdownMenuContent({ children }) {
+export function DropdownMenuContent({ children, className = '', align = 'right' }) {
+  const alignClass = align === 'end' ? 'right-0' : 'left-0';
+
   return (
-    <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+    <div className={`absolute ${alignClass} mt-2 w-48 rounded-md shadow-lg bg-popover ring-1 ring-black ring-opacity-5 z-10 ${className}`}>
       <div className="py-1" role="menu">
         {children}
       </div>
