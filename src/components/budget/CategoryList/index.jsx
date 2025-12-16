@@ -6,11 +6,11 @@ import { motion } from 'framer-motion';
 
 const CategoryList = () => {
   const { state, actions } = useBudget();
-  const { categories, expandedCategories } = state;
+  const { categories = {}, expandedCategories = [] } = state;
 
   return (
     <div className="space-y-4">
-      {Object.entries(categories).map(([categoryName, categoryData], index) => (
+      {Object.entries(categories || {}).map(([categoryName, categoryData], index) => (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}

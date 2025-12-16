@@ -94,10 +94,10 @@ const CategoryItem = ({ categoryName, categoryData, isExpanded }) => {
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
             <div className="border-t border-border/50 bg-muted/30 p-4 space-y-3">
-              {categoryData.items.map((item) => (
+              {(categoryData.items || []).map((item) => (
                 <SubcategoryItem key={item.id} item={item} />
               ))}
-              {categoryData.items.length === 0 && (
+              {(!categoryData.items || categoryData.items.length === 0) && (
                 <div className="text-center py-4 text-sm text-muted-foreground italic">
                   No subcategories yet
                 </div>

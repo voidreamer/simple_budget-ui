@@ -17,21 +17,21 @@ import { DollarSign, TrendingDown, TrendingUp } from 'lucide-react';
 const BudgetOverview = () => {
   const { state } = useBudget();
   const { isDarkMode } = useTheme();
-  const { categories } = state;
+  const { categories = {} } = state;
 
   // Transform data for charts
-  const chartData = Object.entries(categories).map(([name, data]) => ({
+  const chartData = Object.entries(categories || {}).map(([name, data]) => ({
     name,
-    Budget: data.budget,
-    Allotted: data.items.reduce((sum, item) => sum + item.allotted, 0),
-    Spending: data.items.reduce((sum, item) => sum + item.spending, 0),
+    Budget: data.budget || 0,
+    Allotted: (data.items || []).reduce((sum, item) => sum + (item.allotted || 0), 0),
+    Spending: (data.items || []).reduce((sum, item) => sum + (item.spending || 0), 0),
   }));
 
   // Calculate totals
-  const totals = Object.values(categories).reduce((acc, category) => {
-    const categorySpending = category.items.reduce((sum, item) => sum + item.spending, 0);
-    const categoryBudget = category.budget;
-    
+  const totals = Object.values(categories || {}).reduce((acc, category) => {
+    const categorySpending = (category.items || []).reduce((sum, item) => sum + (item.spending || 0), 0);
+    const categoryBudget = category.budget || 0;
+
     return {
       totalBudget: acc.totalBudget + categoryBudget,
       totalSpending: acc.totalSpending + categorySpending

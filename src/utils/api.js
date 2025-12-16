@@ -64,7 +64,7 @@ export const budgetApi = {
         transformedData[category.name] = {
           id: category.id,
           budget: category.budget,
-          items: category.subcategories.map(sub => ({
+          items: (category.subcategories || []).map(sub => ({
             id: sub.id,
             name: sub.name,
             allotted: sub.allotted,

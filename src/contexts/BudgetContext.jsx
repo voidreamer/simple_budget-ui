@@ -24,6 +24,9 @@ export const BudgetProvider = ({ children }) => {
   // Modal State
   const [modal, setModal] = useState({ isOpen: false, type: null, data: null });
 
+  // UI State
+  const [expandedCategories, setExpandedCategories] = useState([]);
+
   // 1. Fetch Budgets on Login
   useEffect(() => {
     if (user) {
@@ -113,6 +116,14 @@ export const BudgetProvider = ({ children }) => {
   const openModal = (type, data = null) => setModal({ isOpen: true, type, data });
   const closeModal = () => setModal({ isOpen: false, type: null, data: null });
 
+  const toggleCategory = (categoryName) => {
+    setExpandedCategories(prev =>
+      prev.includes(categoryName)
+        ? prev.filter(c => c !== categoryName)
+        : [...prev, categoryName]
+    );
+  };
+
   const refreshData = () => fetchDashboardData();
 
   const createCategory = async (data) => {
@@ -132,6 +143,17 @@ export const BudgetProvider = ({ children }) => {
     } catch (error) {
       console.error("Failed to edit category:", error);
       alert(`Failed to edit category: ${error.message || 'Unknown error'}`);
+      throw error;
+    }
+  };
+
+  const deleteCategory = async (id) => {
+    try {
+      await budgetApi.deleteCategory(id);
+      await refreshData();
+    } catch (error) {
+      console.error("Failed to delete category:", error);
+      alert(`Failed to delete category: ${error.message || 'Unknown error'}`);
       throw error;
     }
   };
@@ -192,14 +214,17 @@ export const BudgetProvider = ({ children }) => {
       isLoading: loading,
       loadingStates,
       modal,
-      selectedDate
+      selectedDate,
+      expandedCategories
     },
     actions: {
       setSelectedDate,
       openModal,
       closeModal,
+      toggleCategory,
       createCategory,
       editCategory,
+      deleteCategory,
       createSubcategory,
       updateSubcategory,
       createTransaction,
