@@ -1,7 +1,7 @@
 // components/budget/BudgetDashboard.jsx
 import React, { useState, useEffect } from 'react';
 import { useBudget } from '../../contexts/BudgetContext';
-import { BarChart2, Calendar, ChevronLeft, ChevronRight, Plus, Wallet } from 'lucide-react';
+import { BarChart2, Calendar, ChevronLeft, ChevronRight, Plus, Wallet, TrendingUp } from 'lucide-react';
 import CategoryList from './CategoryList';
 import BudgetOverview from './Charts/BudgetOverview';
 import { Button } from '../ui/button';
@@ -159,7 +159,6 @@ const BudgetDashboard = () => {
         type={modal.type}
         initialValues={modal.data}
         onSubmit={async (data) => {
-          console.log('Modal onSubmit - type:', modal.type, 'data:', data, 'modal.data:', modal.data);
           try {
             const { month, year } = parseDateString(state.selectedDate);
             switch (modal.type) {
@@ -168,7 +167,6 @@ const BudgetDashboard = () => {
               case 'edit-category':
                 await actions.editCategory(modal.data.id, { name: data.name, month, year }); break;
               case 'subcategory':
-                console.log('Creating subcategory with category_id:', modal.data.id);
                 await actions.createSubcategory({ ...data, category_id: modal.data.id }); break;
               case 'transaction':
                 await actions.createTransaction({ ...data, subcategory_id: modal.data.subcategory_id }); break;
@@ -177,7 +175,6 @@ const BudgetDashboard = () => {
               case 'edit-subcategory':
                 await actions.updateSubcategory(modal.data.id, data); break;
             }
-            console.log('Action completed successfully');
             actions.closeModal();
           } catch (error) {
             console.error('Modal submit error:', error);
@@ -199,7 +196,5 @@ const StatCard = ({ label, value, icon: Icon, color }) => (
     </div>
   </div>
 );
-
-import { TrendingUp } from 'lucide-react'; // Import missing icon locally if needed
 
 export default BudgetDashboard;
