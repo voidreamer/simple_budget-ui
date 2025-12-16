@@ -4,7 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import BudgetDashboard from './BudgetDashboard';
 import ThemeToggle from '../ui/theme-toggle';
 import ColorThemeSwitcher from '../ui/ColorThemeSwitcher';
-import { ChevronDown, Plus, Users, Wallet, LogOut, Loader2 } from 'lucide-react';
+import { ChevronDown, Plus, Users, Wallet, LogOut, Loader2, Check, Copy } from 'lucide-react';
 
 // Modern Budget Selector with Dropdown
 const BudgetSelector = () => {
@@ -13,7 +13,10 @@ const BudgetSelector = () => {
   const [showNewBudgetForm, setShowNewBudgetForm] = useState(false);
   const [showInviteForm, setShowInviteForm] = useState(false);
   const [newBudgetName, setNewBudgetName] = useState('');
-  const [inviteUserId, setInviteUserId] = useState('');
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [inviteLink, setInviteLink] = useState('');
+  const [showInviteResult, setShowInviteResult] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const handleCreateBudget = async (e) => {
     e.preventDefault();
@@ -26,11 +29,36 @@ const BudgetSelector = () => {
 
   const handleInvite = async (e) => {
     e.preventDefault();
-    if (inviteUserId.trim()) {
-      await addMember(inviteUserId.trim());
-      setInviteUserId('');
-      setShowInviteForm(false);
+    if (inviteEmail.trim()) {
+      try {
+        const result = await addMember(inviteEmail.trim());
+        // Generate the invitation link
+        const appUrl = import.meta.env.VITE_APP_URL || window.location.origin;
+        const link = `${appUrl}/accept-invite/${result.token}`;
+        setInviteLink(link);
+        setShowInviteResult(true);
+      } catch (error) {
+        console.error('Failed to create invitation:', error);
+      }
     }
+  };
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(inviteLink);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      console.error('Failed to copy link:', error);
+      alert('Failed to copy link');
+    }
+  };
+
+  const handleCloseInviteResult = () => {
+    setShowInviteResult(false);
+    setInviteEmail('');
+    setInviteLink('');
+    setShowInviteForm(false);
   };
 
   if (loading && budgets.length === 0) {
@@ -141,32 +169,59 @@ const BudgetSelector = () => {
               {currentBudget && (
                 <>
                   {showInviteForm ? (
-                    <form onSubmit={handleInvite} className="p-2 mt-2 border-t border-border">
-                      <p className="text-xs text-muted-foreground mb-2">Invite to "{currentBudget.name}"</p>
-                      <input
-                        type="text"
-                        value={inviteUserId}
-                        onChange={(e) => setInviteUserId(e.target.value)}
-                        placeholder="User ID (UUID)..."
-                        className="w-full px-3 py-2 text-sm rounded-md border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-                        autoFocus
-                      />
-                      <div className="flex gap-2 mt-2">
-                        <button
-                          type="submit"
-                          className="flex-1 px-3 py-1.5 text-sm bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/90"
-                        >
-                          Invite
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setShowInviteForm(false)}
-                          className="px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground"
-                        >
-                          Cancel
-                        </button>
+                    showInviteResult ? (
+                      <div className="p-3 mt-2 border-t border-border">
+                        <p className="text-xs text-muted-foreground mb-2">Invitation created for {inviteEmail}</p>
+                        <div className="bg-muted/50 rounded-md p-2 mb-2">
+                          <p className="text-xs font-mono break-all text-foreground">{inviteLink}</p>
+                        </div>
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={handleCopyLink}
+                            className="flex-1 flex items-center justify-center gap-2 px-3 py-1.5 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+                          >
+                            {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                            {copied ? 'Copied!' : 'Copy Link'}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleCloseInviteResult}
+                            className="px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground"
+                          >
+                            Done
+                          </button>
+                        </div>
                       </div>
-                    </form>
+                    ) : (
+                      <form onSubmit={handleInvite} className="p-2 mt-2 border-t border-border">
+                        <p className="text-xs text-muted-foreground mb-2">Invite to "{currentBudget.name}"</p>
+                        <input
+                          type="email"
+                          value={inviteEmail}
+                          onChange={(e) => setInviteEmail(e.target.value)}
+                          placeholder="email@example.com"
+                          className="w-full px-3 py-2 text-sm rounded-md border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+                          autoFocus
+                          required
+                        />
+                        <div className="flex gap-2 mt-2">
+                          <button
+                            type="submit"
+                            className="flex-1 px-3 py-1.5 text-sm bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/90"
+                          >
+                            Invite
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setShowInviteForm(false)}
+                            className="px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </form>
+                    )
                   ) : (
                     <button
                       onClick={() => setShowInviteForm(true)}

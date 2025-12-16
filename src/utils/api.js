@@ -220,11 +220,25 @@ export const budgetApi = {
     return handleResponse(response);
   },
 
-  async addBudgetMember(budgetId, userId) {
-    const response = await fetch(`${API_BASE_URL}/budgets/${budgetId}/members?user_id_to_add=${userId}`, {
+  async addBudgetMember(budgetId, email) {
+    const response = await fetch(`${API_BASE_URL}/budgets/${budgetId}/invitations`, {
+      method: 'POST',
+      headers: await getAuthHeaders(),
+      body: JSON.stringify({ email })
+    });
+    return handleResponse(response);
+  },
+
+  async acceptInvitation(token) {
+    const response = await fetch(`${API_BASE_URL}/invitations/accept/${token}`, {
       method: 'POST',
       headers: await getAuthHeaders()
     });
+    return handleResponse(response);
+  },
+
+  async validateInvitation(token) {
+    const response = await fetch(`${API_BASE_URL}/invitations/validate/${token}`);
     return handleResponse(response);
   }
 };
