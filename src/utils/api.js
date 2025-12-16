@@ -247,7 +247,7 @@ export const budgetApi = {
   },
 
   async acceptInvitation(token) {
-    const response = await fetch(`${API_BASE_URL}/invitations/accept/${token}`, {
+    const response = await fetch(`${API_BASE_URL}/budgets/invitations/accept/${token}`, {
       method: 'POST',
       headers: await getAuthHeaders()
     });
@@ -255,7 +255,7 @@ export const budgetApi = {
   },
 
   async validateInvitation(token) {
-    const response = await fetch(`${API_BASE_URL}/invitations/validate/${token}`);
+    const response = await fetch(`${API_BASE_URL}/budgets/invitations/validate/${token}`);
     return handleResponse(response);
   }
 };
