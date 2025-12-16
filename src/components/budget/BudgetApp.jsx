@@ -4,7 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import BudgetDashboard from './BudgetDashboard';
 import ThemeToggle from '../ui/theme-toggle';
 import ColorThemeSwitcher from '../ui/ColorThemeSwitcher';
-import { ChevronDown, Plus, Users, Wallet, LogOut, Loader2, Check, Copy, Edit2, Trash2, X } from 'lucide-react';
+import { ChevronDown, Plus, Users, User, Wallet, LogOut, Loader2, Check, Copy, Edit2, Trash2, X } from 'lucide-react';
 
 // Modern Budget Selector with Dropdown
 const BudgetSelector = () => {
@@ -127,6 +127,18 @@ const BudgetSelector = () => {
         <span className="font-medium text-foreground">
           {currentBudget ? currentBudget.name : 'Select Budget'}
         </span>
+        {currentBudget && (
+          <div className="flex items-center gap-1 text-muted-foreground">
+            {currentBudget.member_count === 1 ? (
+              <User className="w-3.5 h-3.5" />
+            ) : (
+              <>
+                <Users className="w-3.5 h-3.5" />
+                <span className="text-xs">{currentBudget.member_count}</span>
+              </>
+            )}
+          </div>
+        )}
         <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
@@ -191,6 +203,19 @@ const BudgetSelector = () => {
                         >
                           <Wallet className="w-4 h-4" />
                           <span className="flex-1 truncate">{budget.name}</span>
+
+                          {/* Shared/Personal Indicator */}
+                          <div className="flex items-center gap-1 text-muted-foreground">
+                            {budget.member_count === 1 ? (
+                              <User className="w-3.5 h-3.5" title="Personal budget" />
+                            ) : (
+                              <>
+                                <Users className="w-3.5 h-3.5" title="Shared budget" />
+                                <span className="text-xs">{budget.member_count}</span>
+                              </>
+                            )}
+                          </div>
+
                           {currentBudget?.id === budget.id && (
                             <span className="text-xs bg-primary/20 px-2 py-0.5 rounded-full">Active</span>
                           )}
