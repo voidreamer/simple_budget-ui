@@ -4,11 +4,11 @@ import { useAuth } from '../../contexts/AuthContext';
 import BudgetDashboard from './BudgetDashboard';
 import ThemeToggle from '../ui/theme-toggle';
 import ColorThemeSwitcher from '../ui/ColorThemeSwitcher';
-import { ChevronDown, Plus, Users, Wallet, LogOut, Loader2, Check, Copy } from 'lucide-react';
+import { ChevronDown, Plus, Users, Wallet, LogOut, Loader2, Check, Copy, Edit2, Trash2, X } from 'lucide-react';
 
 // Modern Budget Selector with Dropdown
 const BudgetSelector = () => {
-  const { budgets, currentBudget, switchBudget, createNewBudget, addMember, loading } = useBudget();
+  const { budgets, currentBudget, switchBudget, createNewBudget, renameBudget, deleteBudget, addMember, loading } = useBudget();
   const [isOpen, setIsOpen] = useState(false);
   const [showNewBudgetForm, setShowNewBudgetForm] = useState(false);
   const [showInviteForm, setShowInviteForm] = useState(false);
@@ -17,6 +17,9 @@ const BudgetSelector = () => {
   const [inviteLink, setInviteLink] = useState('');
   const [showInviteResult, setShowInviteResult] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [renamingBudgetId, setRenamingBudgetId] = useState(null);
+  const [renameName, setRenameName] = useState('');
+  const [deletingBudgetId, setDeletingBudgetId] = useState(null);
 
   const handleCreateBudget = async (e) => {
     e.preventDefault();
@@ -59,6 +62,49 @@ const BudgetSelector = () => {
     setInviteEmail('');
     setInviteLink('');
     setShowInviteForm(false);
+  };
+
+  const handleStartRename = (budget) => {
+    setRenamingBudgetId(budget.id);
+    setRenameName(budget.name);
+  };
+
+  const handleRename = async (e) => {
+    e.preventDefault();
+    if (renameName.trim() && renamingBudgetId) {
+      try {
+        await renameBudget(renamingBudgetId, renameName.trim());
+        setRenamingBudgetId(null);
+        setRenameName('');
+      } catch (error) {
+        console.error('Failed to rename budget:', error);
+      }
+    }
+  };
+
+  const handleCancelRename = () => {
+    setRenamingBudgetId(null);
+    setRenameName('');
+  };
+
+  const handleStartDelete = (budgetId) => {
+    setDeletingBudgetId(budgetId);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (deletingBudgetId) {
+      try {
+        await deleteBudget(deletingBudgetId);
+        setDeletingBudgetId(null);
+        setIsOpen(false);
+      } catch (error) {
+        console.error('Failed to delete budget:', error);
+      }
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setDeletingBudgetId(null);
   };
 
   if (loading && budgets.length === 0) {
@@ -104,24 +150,76 @@ const BudgetSelector = () => {
               <div className="p-2 border-b border-border">
                 <p className="text-xs text-muted-foreground px-2 py-1 uppercase tracking-wider">Your Budgets</p>
                 {budgets.map(budget => (
-                  <button
-                    key={budget.id}
-                    onClick={() => {
-                      switchBudget(budget.id);
-                      setIsOpen(false);
-                    }}
-                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-left transition-colors ${
-                      currentBudget?.id === budget.id
-                        ? 'bg-primary/10 text-primary'
-                        : 'hover:bg-muted text-foreground'
-                    }`}
-                  >
-                    <Wallet className="w-4 h-4" />
-                    <span className="flex-1 truncate">{budget.name}</span>
-                    {currentBudget?.id === budget.id && (
-                      <span className="text-xs bg-primary/20 px-2 py-0.5 rounded-full">Active</span>
+                  <div key={budget.id} className="group relative">
+                    {renamingBudgetId === budget.id ? (
+                      <form onSubmit={handleRename} className="p-2">
+                        <input
+                          type="text"
+                          value={renameName}
+                          onChange={(e) => setRenameName(e.target.value)}
+                          className="w-full px-3 py-2 text-sm rounded-md border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+                          autoFocus
+                        />
+                        <div className="flex gap-2 mt-2">
+                          <button
+                            type="submit"
+                            className="flex-1 px-3 py-1.5 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+                          >
+                            Save
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleCancelRename}
+                            className="px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </form>
+                    ) : (
+                      <div className="flex items-center">
+                        <button
+                          onClick={() => {
+                            switchBudget(budget.id);
+                            setIsOpen(false);
+                          }}
+                          className={`flex-1 flex items-center gap-3 px-3 py-2 rounded-md text-left transition-colors ${
+                            currentBudget?.id === budget.id
+                              ? 'bg-primary/10 text-primary'
+                              : 'hover:bg-muted text-foreground'
+                          }`}
+                        >
+                          <Wallet className="w-4 h-4" />
+                          <span className="flex-1 truncate">{budget.name}</span>
+                          {currentBudget?.id === budget.id && (
+                            <span className="text-xs bg-primary/20 px-2 py-0.5 rounded-full">Active</span>
+                          )}
+                        </button>
+                        <div className="flex gap-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleStartRename(budget);
+                            }}
+                            className="p-1 hover:bg-muted rounded"
+                            title="Rename budget"
+                          >
+                            <Edit2 className="w-4 h-4 text-muted-foreground hover:text-foreground" />
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleStartDelete(budget.id);
+                            }}
+                            className="p-1 hover:bg-muted rounded"
+                            title="Delete budget"
+                          >
+                            <Trash2 className="w-4 h-4 text-muted-foreground hover:text-destructive" />
+                          </button>
+                        </div>
+                      </div>
                     )}
-                  </button>
+                  </div>
                 ))}
               </div>
             )}
@@ -233,6 +331,41 @@ const BudgetSelector = () => {
                   )}
                 </>
               )}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deletingBudgetId && (
+        <>
+          <div className="fixed inset-0 bg-black/50 z-50" onClick={handleCancelDelete} />
+          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-card border border-border rounded-lg shadow-xl z-50 p-6 max-w-sm w-full mx-4">
+            <div className="flex items-start gap-4">
+              <div className="p-2 bg-destructive/10 rounded-full">
+                <Trash2 className="w-6 h-6 text-destructive" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-foreground mb-2">Delete Budget?</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Are you sure you want to delete "{budgets.find(b => b.id === deletingBudgetId)?.name}"?
+                  This will permanently delete all categories, subcategories, and transactions. This action cannot be undone.
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleConfirmDelete}
+                    className="flex-1 px-4 py-2 bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 font-medium"
+                  >
+                    Delete
+                  </button>
+                  <button
+                    onClick={handleCancelDelete}
+                    className="flex-1 px-4 py-2 bg-muted text-foreground rounded-md hover:bg-muted/80 font-medium"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </>

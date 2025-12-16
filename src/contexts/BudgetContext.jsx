@@ -102,16 +102,50 @@ export const BudgetProvider = ({ children }) => {
     } catch (e) { console.error(e); }
   };
 
-  const addMember = async (userId) => {
+  const renameBudget = async (budgetId, name) => {
+    try {
+      await budgetApi.renameBudget(budgetId, name);
+      await refreshBudgets();
+    } catch (error) {
+      console.error("Failed to rename budget:", error);
+      const errorMessage = error.data?.detail || error.message || "Failed to rename budget";
+      alert(`Error: ${errorMessage}`);
+      throw error;
+    }
+  };
+
+  const deleteBudget = async (budgetId) => {
+    try {
+      await budgetApi.deleteBudget(budgetId);
+      await refreshBudgets();
+      // If deleted budget was active, switch to first available budget
+      if (currentBudget?.id === budgetId) {
+        const remaining = budgets.filter(b => b.id !== budgetId);
+        if (remaining.length > 0) {
+          switchBudget(remaining[0].id);
+        } else {
+          setCurrentBudget(null);
+          setCategories({});
+        }
+      }
+    } catch (error) {
+      console.error("Failed to delete budget:", error);
+      const errorMessage = error.data?.detail || error.message || "Failed to delete budget";
+      alert(`Error: ${errorMessage}`);
+      throw error;
+    }
+  };
+
+  const addMember = async (email) => {
     if (!currentBudget) return;
     try {
-      await budgetApi.addBudgetMember(currentBudget.id, userId);
-      alert(`Successfully added user ${userId} to budget "${currentBudget.name}"`);
+      const result = await budgetApi.addBudgetMember(currentBudget.id, email);
+      return result; // Return invitation with token for UI to show link
     } catch (error) {
-      console.error("Failed to add member:", error);
-      const errorMessage = error.response?.data?.detail || error.message || "Failed to add member";
+      console.error("Failed to create invitation:", error);
+      const errorMessage = error.data?.detail || error.message || "Failed to create invitation";
       alert(`Error: ${errorMessage}`);
-      throw error; // Re-throw so caller knows it failed
+      throw error;
     }
   };
 
@@ -234,6 +268,8 @@ export const BudgetProvider = ({ children }) => {
     currentBudget,
     switchBudget,
     createNewBudget,
+    renameBudget,
+    deleteBudget,
     addMember,
     loading,
 

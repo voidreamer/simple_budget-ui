@@ -229,6 +229,23 @@ export const budgetApi = {
     return handleResponse(response);
   },
 
+  async renameBudget(budgetId, name) {
+    const response = await fetch(`${API_BASE_URL}/budgets/${budgetId}`, {
+      method: 'PUT',
+      headers: await getAuthHeaders(),
+      body: JSON.stringify({ name })
+    });
+    return handleResponse(response);
+  },
+
+  async deleteBudget(budgetId) {
+    const response = await fetch(`${API_BASE_URL}/budgets/${budgetId}`, {
+      method: 'DELETE',
+      headers: await getAuthHeaders()
+    });
+    return handleResponse(response);
+  },
+
   async acceptInvitation(token) {
     const response = await fetch(`${API_BASE_URL}/invitations/accept/${token}`, {
       method: 'POST',
