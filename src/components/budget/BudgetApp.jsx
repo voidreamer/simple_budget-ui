@@ -3,6 +3,7 @@ import { useBudget } from '../../contexts/BudgetContext';
 import { useAuth } from '../../contexts/AuthContext';
 import BudgetDashboard from './BudgetDashboard';
 import ThemeToggle from '../ui/theme-toggle';
+import ColorThemeSwitcher from '../ui/ColorThemeSwitcher';
 import { ChevronDown, Plus, Users, Wallet, LogOut, Loader2 } from 'lucide-react';
 
 // Modern Budget Selector with Dropdown
@@ -303,6 +304,7 @@ const BudgetApp = () => {
                   {user.email}
                 </span>
               )}
+              <ColorThemeSwitcher />
               <ThemeToggle />
               <button
                 onClick={logout}

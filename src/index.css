@@ -9,98 +9,95 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
-    /* Soft cool gray background */
-    --foreground: 222.2 84% 4.9%;
+    /* Modern neutral background - warmer and cleaner */
+    --background: 0 0% 99%;
+    --foreground: 240 10% 3.9%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 240 10% 3.9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 240 10% 3.9%;
 
-    --primary: 246 80% 60%;
-    /* Vibrant Indigo/Blurple */
-    --primary-foreground: 210 40% 98%;
+    /* Primary color - dynamically set by theme */
+    --primary: 160 84% 39%;
+    /* Default: Emerald */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
 
-    --accent: 246 80% 60%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 246 80% 60%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 160 84% 39%;
 
-    --radius: 1rem;
-    /* More rounded corners */
+    --radius: 0.75rem;
 
     /* Category Colors */
     --category-bg: 0 0% 100%;
-    --category-bg-hover: 210 40% 98%;
-    --category-text: 222.2 84% 4.9%;
-    --category-text-muted: 215.4 16.3% 46.9%;
+    --category-bg-hover: 240 4.8% 97%;
+    --category-text: 240 10% 3.9%;
+    --category-text-muted: 240 3.8% 46.1%;
 
-    /* Translucent effects */
+    /* Enhanced translucent effects */
     --glass-bg: 255 255 255;
-    --glass-opacity: 0.7;
-    --glass-border: 255 255 255;
-    --glass-border-opacity: 0.2;
+    --glass-opacity: 0.8;
+    --glass-border: 240 5.9% 90%;
+    --glass-border-opacity: 0.5;
   }
 
   .dark {
-    --background: 222.2 47.4% 11.2%;
-    /* Deep Slate (slate-950 equivalent) */
-    --foreground: 210 40% 98%;
+    /* Darker, more contrast background */
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
 
-    --card: 217.2 32.6% 17.5%;
-    /* Slate-900 */
-    --card-foreground: 210 40% 98%;
+    --card: 240 10% 8%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 217.2 32.6% 17.5%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 240 10% 8%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 217.2 91.2% 59.8%;
-    /* Bright Blue/Indigo */
-    --primary-foreground: 222.2 47.4% 11.2%;
+    /* Primary color - dynamically set by theme */
+    --primary: 160 84% 52%;
+    /* Default: Emerald (brighter for dark mode) */
+    --primary-foreground: 240 10% 3.9%;
 
-    --secondary: 217.2 32.6% 24%;
-    /* Lighter Slate for contrast */
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 217.2 32.6% 24%;
-    --muted-foreground: 215 20.2% 70%;
-    /* Lighter text for readability */
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
 
-    --accent: 217.2 32.6% 24%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 50%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 217.2 32.6% 24%;
-    --input: 217.2 32.6% 24%;
-    --ring: 224.3 76.3% 48%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 160 84% 52%;
 
     /* Category Colors */
-    --category-bg: 217.2 32.6% 17.5%;
-    --category-bg-hover: 217.2 32.6% 22%;
-    --category-text: 210 40% 98%;
-    --category-text-muted: 215 20.2% 70%;
+    --category-bg: 240 10% 8%;
+    --category-bg-hover: 240 3.7% 12%;
+    --category-text: 0 0% 98%;
+    --category-text-muted: 240 5% 64.9%;
 
-    /* Translucent effects dark */
-    --glass-bg: 15 23 42;
-    /* Slate-950 */
-    --glass-opacity: 0.7;
-    --glass-border: 255 255 255;
-    --glass-border-opacity: 0.08;
+    /* Enhanced translucent effects dark */
+    --glass-bg: 240 10% 3.9%;
+    --glass-opacity: 0.8;
+    --glass-border: 240 3.7% 20%;
+    --glass-border-opacity: 0.5;
   }
 }
 
@@ -111,17 +108,32 @@
 
   body {
     @apply bg-background text-foreground antialiased selection:bg-primary/30;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    letter-spacing: -0.011em;
+  }
+
+  /* Subtle gradient overlay for depth */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 50% 0%, hsl(var(--primary) / 0.03), transparent 50%);
+    pointer-events: none;
+    z-index: -1;
   }
 }
 
 @layer utilities {
   .glass {
-    @apply bg-white/70 dark:bg-slate-950/70 backdrop-blur-md border border-white/20 dark:border-white/5 shadow-lg;
+    @apply bg-white/80 dark:bg-[rgb(var(--glass-bg))]/80 backdrop-blur-xl border border-border shadow-xl;
   }
 
   .glass-card {
-    @apply bg-card/80 dark:bg-slate-900/80 backdrop-blur-sm border border-border/50 shadow-sm transition-all duration-300 hover:shadow-md hover:border-primary/20;
+    @apply bg-card/90 backdrop-blur-md border border-border/60 shadow-sm transition-all duration-300 hover:shadow-lg hover:border-primary/30 hover:scale-[1.01];
   }
 }
 
