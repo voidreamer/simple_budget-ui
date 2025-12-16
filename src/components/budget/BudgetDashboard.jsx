@@ -158,24 +158,28 @@ const BudgetDashboard = () => {
         onClose={actions.closeModal}
         type={modal.type}
         initialValues={modal.data}
-        onSubmit={(data) => {
-          // Keep existing submit logic
-          const { month, year } = parseDateString(state.selectedDate);
-          switch (modal.type) {
-            case 'category':
-              actions.createCategory({ ...data, month, year }); break;
-            case 'edit-category':
-              actions.editCategory(modal.data.id, { name: data.name, month, year }); break;
-            case 'subcategory':
-              actions.createSubcategory({ ...data, category_id: modal.data.id }); break;
-            case 'transaction':
-              actions.createTransaction({ ...data, subcategory_id: modal.data.subcategory_id }); break;
-            case 'edit-transaction':
-              actions.updateTransaction(modal.data.id, data); break;
-            case 'edit-subcategory':
-              actions.updateSubcategory(modal.data.id, data); break;
+        onSubmit={async (data) => {
+          try {
+            const { month, year } = parseDateString(state.selectedDate);
+            switch (modal.type) {
+              case 'category':
+                await actions.createCategory({ ...data, month, year }); break;
+              case 'edit-category':
+                await actions.editCategory(modal.data.id, { name: data.name, month, year }); break;
+              case 'subcategory':
+                await actions.createSubcategory({ ...data, category_id: modal.data.id }); break;
+              case 'transaction':
+                await actions.createTransaction({ ...data, subcategory_id: modal.data.subcategory_id }); break;
+              case 'edit-transaction':
+                await actions.updateTransaction(modal.data.id, data); break;
+              case 'edit-subcategory':
+                await actions.updateSubcategory(modal.data.id, data); break;
+            }
+            actions.closeModal();
+          } catch (error) {
+            // Error is already shown via alert in the action
+            console.error('Modal submit error:', error);
           }
-          actions.closeModal();
         }}
       />
     </div>

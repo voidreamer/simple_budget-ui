@@ -47,6 +47,7 @@ const CategoryForm = ({ onSubmit, initialValues = {}, type = 'category' }) => {
           placeholder={(type === 'category' || type === 'edit-category') ? 'Budget Amount' : 'Allotted Amount'}
           value={values.amount}
           onChange={handleChange}
+          required
         />
       </div>
       <div className="flex justify-end space-x-2">

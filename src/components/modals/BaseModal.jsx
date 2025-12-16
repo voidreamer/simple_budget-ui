@@ -51,9 +51,9 @@ const BaseModal = ({
           <DialogTitle>{config.title}</DialogTitle>
         </DialogHeader>
         <FormComponent
-          onSubmit={(data) => {
-            onSubmit(data);
-            onClose();
+          onSubmit={async (data) => {
+            await onSubmit(data);
+            // Don't close here - let the parent handle closing after async operations
           }}
           initialValues={initialValues}
           type={type}
