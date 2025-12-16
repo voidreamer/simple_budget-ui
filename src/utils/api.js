@@ -2,7 +2,7 @@
 //const API_BASE_URL = 'https://simple-budget-app-bay.vercel.app/api'
 //const API_BASE_URL = 'http://localhost:8001/api';
 
-const API_BASE_URL = 'https://e3u8n54z1m.execute-api.ca-central-1.amazonaws.com/api';
+const API_BASE_URL = 'https://owllpvmcuf.execute-api.ca-central-1.amazonaws.com/api';
 
 class ApiError extends Error {
   constructor(message, status, data) {

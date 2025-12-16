@@ -1,73 +1,106 @@
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/inter/700.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 210 40% 98%;
+    /* Soft cool gray background */
     --foreground: 222.2 84% 4.9%;
+
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
+
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221 83% 53%;
+
+    --primary: 246 80% 60%;
+    /* Vibrant Indigo/Blurple */
     --primary-foreground: 210 40% 98%;
+
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
+
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 221 83% 53%;
+
+    --accent: 246 80% 60%;
     --accent-foreground: 210 40% 98%;
+
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
+
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 221 83% 53%;
-    --radius: 0.75rem;
+    --ring: 246 80% 60%;
 
-    /* Category-specific colors */
-    --category-bg: 213 100% 96%;
-    --category-bg-hover: 213 100% 93%;
-    --category-text: 221 83% 25%;
-    --category-text-muted: 221 70% 45%;
+    --radius: 1rem;
+    /* More rounded corners */
 
-    /* Transaction colors */
-    --transaction-bg: 210 40% 98%;
-    --success: 142 76% 36%;
-    --success-foreground: 0 0% 100%;
+    /* Category Colors */
+    --category-bg: 0 0% 100%;
+    --category-bg-hover: 210 40% 98%;
+    --category-text: 222.2 84% 4.9%;
+    --category-text-muted: 215.4 16.3% 46.9%;
+
+    /* Translucent effects */
+    --glass-bg: 255 255 255;
+    --glass-opacity: 0.7;
+    --glass-border: 255 255 255;
+    --glass-border-opacity: 0.2;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    --background: 222.2 47.4% 11.2%;
+    /* Deep Slate (slate-950 equivalent) */
     --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
+
+    --card: 217.2 32.6% 17.5%;
+    /* Slate-900 */
     --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
+
+    --popover: 217.2 32.6% 17.5%;
     --popover-foreground: 210 40% 98%;
-    --primary: 217 91% 60%;
+
+    --primary: 217.2 91.2% 59.8%;
+    /* Bright Blue/Indigo */
     --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
+
+    --secondary: 217.2 32.6% 24%;
+    /* Lighter Slate for contrast */
     --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217 91% 60%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 217.2 32.6% 24%;
+    --muted-foreground: 215 20.2% 70%;
+    /* Lighter text for readability */
+
+    --accent: 217.2 32.6% 24%;
+    --accent-foreground: 210 40% 98%;
+
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
+
+    --border: 217.2 32.6% 24%;
+    --input: 217.2 32.6% 24%;
     --ring: 224.3 76.3% 48%;
 
-    /* Category-specific colors (dark mode) */
-    --category-bg: 217.2 32.6% 12%;
-    --category-bg-hover: 217.2 32.6% 15%;
+    /* Category Colors */
+    --category-bg: 217.2 32.6% 17.5%;
+    --category-bg-hover: 217.2 32.6% 22%;
     --category-text: 210 40% 98%;
-    --category-text-muted: 215 20.2% 65.1%;
+    --category-text-muted: 215 20.2% 70%;
 
-    /* Transaction colors (dark mode) */
-    --transaction-bg: 217.2 32.6% 10%;
-    --success: 142 70% 45%;
-    --success-foreground: 0 0% 100%;
+    /* Translucent effects dark */
+    --glass-bg: 15 23 42;
+    /* Slate-950 */
+    --glass-opacity: 0.7;
+    --glass-border: 255 255 255;
+    --glass-border-opacity: 0.08;
   }
 }
 
@@ -77,23 +110,50 @@
   }
 
   body {
-    @apply bg-background text-foreground transition-colors duration-300;
+    @apply bg-background text-foreground antialiased selection:bg-primary/30;
+    font-family: 'Inter', sans-serif;
   }
 }
+
+@layer utilities {
+  .glass {
+    @apply bg-white/70 dark:bg-slate-950/70 backdrop-blur-md border border-white/20 dark:border-white/5 shadow-lg;
+  }
+
+  .glass-card {
+    @apply bg-card/80 dark:bg-slate-900/80 backdrop-blur-sm border border-border/50 shadow-sm transition-all duration-300 hover:shadow-md hover:border-primary/20;
+  }
+}
+
 
 /* Toast animation */
 @keyframes slide-in {
   from {
-    transform: translateX(100%);
+    transform: translateY(100%);
     opacity: 0;
   }
 
   to {
-    transform: translateX(0);
+    transform: translateY(0);
     opacity: 1;
   }
 }
 
+/* Desktop slide in from right */
+@media (min-width: 768px) {
+  @keyframes slide-in {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+}
+
 .animate-slide-in {
-  animation: slide-in 0.3s ease-out;
+  animation: slide-in 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
