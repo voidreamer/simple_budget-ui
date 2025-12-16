@@ -84,13 +84,15 @@ export const budgetApi = {
 
   async createCategory(data) {
     const response = await fetch(
-      `${API_BASE_URL}/categories/?month=${data.month}&year=${data.year}`,
+      `${API_BASE_URL}/categories/`,
       {
         method: 'POST',
         headers: await getAuthHeaders(),
         body: JSON.stringify({
           name: data.name,
-          budget: data.budget
+          budget: data.budget,
+          month: data.month,
+          year: data.year
         })
       }
     );

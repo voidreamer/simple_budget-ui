@@ -16,6 +16,16 @@ const BudgetDashboard = () => {
   const [dates, setDates] = useState([]);
   const [hasInitiallyLoaded, setHasInitiallyLoaded] = useState(false);
 
+  // Helper function to parse date string "December 2025" to { month: 12, year: 2025 }
+  const parseDateString = (dateString) => {
+    const [monthName, yearStr] = dateString.split(' ');
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                        'July', 'August', 'September', 'October', 'November', 'December'];
+    const month = monthNames.indexOf(monthName) + 1;
+    const year = parseInt(yearStr, 10);
+    return { month, year };
+  };
+
   // Generate last 12 months
   useEffect(() => {
     const currentDate = new Date();
@@ -150,11 +160,12 @@ const BudgetDashboard = () => {
         initialValues={modal.data}
         onSubmit={(data) => {
           // Keep existing submit logic
+          const { month, year } = parseDateString(state.selectedDate);
           switch (modal.type) {
             case 'category':
-              actions.createCategory({ ...data, month: state.selectedDate.split(' ')[0], year: state.selectedDate.split(' ')[1] }); break;
+              actions.createCategory({ ...data, month, year }); break;
             case 'edit-category':
-              actions.editCategory(modal.data.id, { name: data.name, month: state.selectedDate.split(' ')[0], year: state.selectedDate.split(' ')[1] }); break;
+              actions.editCategory(modal.data.id, { name: data.name, month, year }); break;
             case 'subcategory':
               actions.createSubcategory({ ...data, category_id: modal.data.id }); break;
             case 'transaction':
