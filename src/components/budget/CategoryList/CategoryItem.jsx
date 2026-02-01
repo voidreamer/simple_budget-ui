@@ -32,7 +32,7 @@ const CategoryItem = ({ categoryName, categoryData, isExpanded }) => {
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2">
-                <h3 className="font-semibold text-lg">{categoryName}</h3>
+                <h3 className="font-bold text-xl tracking-tight uppercase">{categoryName}</h3>
                 {isOverBudget && <AlertCircle className="w-4 h-4 text-red-500" />}
               </div>
 

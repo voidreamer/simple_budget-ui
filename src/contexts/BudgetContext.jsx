@@ -24,6 +24,9 @@ export const BudgetProvider = ({ children }) => {
   // Modal State
   const [modal, setModal] = useState({ isOpen: false, type: null, data: null });
 
+  // UI State
+  const [expandedCategories, setExpandedCategories] = useState([]);
+
   // 1. Fetch Budgets on Login
   useEffect(() => {
     if (user) {
@@ -115,6 +118,36 @@ export const BudgetProvider = ({ children }) => {
 
   const refreshData = () => fetchDashboardData();
 
+  const toggleCategory = (categoryName) => {
+    setExpandedCategories(prev =>
+      prev.includes(categoryName)
+        ? prev.filter(c => c !== categoryName)
+        : [...prev, categoryName]
+    );
+  };
+
+  const deleteCategory = async (categoryId) => {
+    if (!window.confirm('Delete this category and all its subcategories?')) return;
+    try {
+      await budgetApi.deleteCategory(categoryId);
+      await refreshData();
+    } catch (error) {
+      console.error("Failed to delete category:", error);
+      alert(`Failed to delete category: ${error.message || 'Unknown error'}`);
+    }
+  };
+
+  const deleteSubcategory = async (subcategoryId) => {
+    if (!window.confirm('Delete this subcategory and all its transactions?')) return;
+    try {
+      await budgetApi.deleteSubcategory(subcategoryId);
+      await refreshData();
+    } catch (error) {
+      console.error("Failed to delete subcategory:", error);
+      alert(`Failed to delete subcategory: ${error.message || 'Unknown error'}`);
+    }
+  };
+
   const createCategory = async (data) => {
     try {
       await budgetApi.createCategory(data);
@@ -189,6 +222,7 @@ export const BudgetProvider = ({ children }) => {
     // Adapter for BudgetDashboard
     state: {
       categories,
+      expandedCategories,
       isLoading: loading,
       loadingStates,
       modal,
@@ -198,10 +232,13 @@ export const BudgetProvider = ({ children }) => {
       setSelectedDate,
       openModal,
       closeModal,
+      toggleCategory,
       createCategory,
       editCategory,
+      deleteCategory,
       createSubcategory,
       updateSubcategory,
+      deleteSubcategory,
       createTransaction,
       updateTransaction
     }
