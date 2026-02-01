@@ -1,15 +1,13 @@
-# PRODUCTION — deploys to the live S3 bucket + CloudFront
-# Only triggers on pushes to main. Do NOT push directly — use PRs.
-name: Deploy Frontend
+name: Deploy Frontend (Staging)
 
 on:
   push:
     branches:
-      - main
+      - staging
   workflow_dispatch:
 
 jobs:
-  deploy-frontend:
+  deploy-frontend-staging:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -25,9 +23,9 @@ jobs:
           npm install
           npm run build
         env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL_STAGING }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY_STAGING }}
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL_STAGING }}
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -38,8 +36,8 @@ jobs:
 
       - name: Deploy to S3
         run: |
-          aws s3 sync ./dist s3://${{ secrets.S3_BUCKET_NAME }}
+          aws s3 sync ./dist s3://${{ secrets.S3_BUCKET_NAME_STAGING }}
 
       - name: Invalidate CloudFront
         run: |
-          aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID_STAGING }} --paths "/*"
