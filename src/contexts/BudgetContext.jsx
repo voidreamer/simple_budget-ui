@@ -240,7 +240,8 @@ export const BudgetProvider = ({ children }) => {
       updateSubcategory,
       deleteSubcategory,
       createTransaction,
-      updateTransaction
+      updateTransaction,
+      refreshData
     }
   };
 

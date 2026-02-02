@@ -210,6 +210,15 @@ export const budgetApi = {
     return handleResponse(response);
   },
 
+  async applyTemplate(data) {
+    const response = await fetch(`${API_BASE_URL}/templates/apply`, {
+      method: 'POST',
+      headers: await getAuthHeaders(),
+      body: JSON.stringify(data)
+    });
+    return handleResponse(response);
+  },
+
   async addBudgetMember(budgetId, userId) {
     const response = await fetch(`${API_BASE_URL}/budgets/${budgetId}/members?user_id_to_add=${userId}`, {
       method: 'POST',
