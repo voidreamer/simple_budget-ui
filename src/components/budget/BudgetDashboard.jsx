@@ -1,18 +1,21 @@
 // components/budget/BudgetDashboard.jsx
 import React, { useState, useEffect } from 'react';
 import { useBudget } from '../../contexts/BudgetContext';
-import { BarChart2, Calendar, ChevronLeft, ChevronRight, Plus, Wallet } from 'lucide-react';
+import { BarChart2, Calendar, ChevronLeft, ChevronRight, Plus, Sparkles, Wallet } from 'lucide-react';
 import CategoryList from './CategoryList';
 import BudgetOverview from './Charts/BudgetOverview';
 import { Button } from '../ui/button';
 import LoadingState from '../ui/LoadingState';
 import BaseModal from '../modals/BaseModal';
+import TemplatesModal from './TemplatesModal';
+import { budgetApi } from '../../utils/api';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const BudgetDashboard = () => {
   const { state, actions } = useBudget();
   const { categories, isLoading, loadingStates, modal } = state;
   const [showGraph, setShowGraph] = useState(false);
+  const [showTemplates, setShowTemplates] = useState(false);
   const [dates, setDates] = useState([]);
   const [hasInitiallyLoaded, setHasInitiallyLoaded] = useState(false);
 
@@ -112,6 +115,14 @@ const BudgetDashboard = () => {
             {showGraph ? 'Hide Stats' : 'Show Stats'}
           </Button>
           <Button
+            variant="outline"
+            onClick={() => setShowTemplates(true)}
+            className="rounded-full gap-2 transition-all"
+          >
+            <Sparkles className="w-4 h-4" />
+            Templates
+          </Button>
+          <Button
             onClick={() => actions.openModal('category')}
             className="rounded-full gap-2 bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 transition-all hover:scale-105 active:scale-95"
           >
@@ -151,6 +162,19 @@ const BudgetDashboard = () => {
       >
         <CategoryList />
       </motion.div>
+
+      {/* Templates Modal */}
+      <TemplatesModal
+        isOpen={showTemplates}
+        onClose={() => setShowTemplates(false)}
+        categories={categories}
+        selectedDate={state.selectedDate}
+        onApply={async (selectedCategories) => {
+          const { month, year } = parseDateString(state.selectedDate);
+          await budgetApi.applyTemplate({ categories: selectedCategories, year, month });
+          await actions.refreshData();
+        }}
+      />
 
       {/* Modals */}
       <BaseModal
